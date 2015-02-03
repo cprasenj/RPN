@@ -52,11 +52,9 @@ Result evaluate(char* expression){
 	Result res;
 	Stack operators = createStack(),operands = createStack();
 	for(i=0;expression[i];i++) {
-		if(isDigit(expression[i]))
-			i = digitOperation(i,expression,operands);
-		else
-			(expression[i]!=32) && push(operators,&expression[i]) 
-			&& operands.list->count>=2 && perform(operands,operators);
+		(isDigit(expression[i])) && (i = digitOperation(i,expression,operands)) ||
+		(expression[i]!=32) && push(operators,&expression[i]) 
+		&& operands.list->count>=2 && perform(operands,operators);
 	}
 	operands.list->count>1 && (res.error = 0) || operators.list->count>1  
 	&& (res.error = -1) && (res.result = 0) ||
