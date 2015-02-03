@@ -1,6 +1,12 @@
 #include <stdio.h>
 #include "rpn.h"
 
+struct num{
+	int result;
+	int index;
+};
+
+typedef struct num NUM;
 int isDigit(char ch){
 	return ch >= '0' && ch <= '9';
 }
@@ -34,17 +40,27 @@ void Do(Stack operands,Stack operators) {
 	operation(digit1,digit2,ot,operands);
 }
 
+NUM digitCalculator(int index,char* expression) {
+	NUM n;
+	int exp = 0;
+	for(;expression[index+1]==32;index++)
+		exp = exp*10 + parseInt(expression[index]);
+	n.result = exp;
+	n.index = index;
+	return n;
+}
+
 int evaluate(char* expression){
-	int i,result,o1,o2,op,exp = 0,*tmp;
+	int i,result,o1,o2,op,*tmp,j,reference;
+	NUM exp;
 	Stack operators = createStack(),operands = createStack();
 	for(i=0;expression[i];i++) {
+		tmp = (int *)malloc(sizeof(int*));
 		if(isDigit(expression[i])){
-			for(;expression[i+1]==32;i++)
-				exp = exp*10 + parseInt(expression[i]);
-			tmp = (int *)malloc(sizeof(int*));
-			*tmp = exp;
+			exp = digitCalculator(i,expression);
+			*tmp = exp.result;
+			i = exp.index;
 			push(operands,tmp);
-			exp = 0;
 		}
 		else
 			(expression[i]!=' ') && push(operators,&expression[i]);

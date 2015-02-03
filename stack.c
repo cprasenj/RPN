@@ -8,8 +8,7 @@ Stack createStack(void) {
 }
 
 int push(Stack stack, void* data) {
-	Node* element;// = create_node(data);
-	element = create_node(data);
+	Node* element = create_node(data);
 	if(!element) return -1;
 	add_to_list(stack.list,element);
 	return stack.list->count;
