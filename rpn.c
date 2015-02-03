@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include "rpn.h"
 
 int isDigit(char ch){
@@ -22,12 +21,8 @@ void operation(int o1,int o2,char op,Stack operands) {
 	push(operands,tmp);
 }
 int perform(Stack operands,Stack operators) {
-	int digit2,digit1;
-	char ot;
-	digit2 = *((int *)pop(operands));
-	digit1 = *((int *)pop(operands));
-	ot = getOperator(operators);
-	operation(digit1,digit2,ot,operands);
+	int digit2 = *((int *)pop(operands)),digit1 = *((int *)pop(operands));
+	operation(digit1,digit2,getOperator(operators),operands);
 	return 1;
 }
 NUM digitCalculator(int index,char* expression) {
@@ -51,11 +46,10 @@ Result evaluate(char* expression){
 	int i;
 	Result res;
 	Stack operators = createStack(),operands = createStack();
-	for(i=0;expression[i];i++) {
+	for(i=0;expression[i];i++) 
 		(isDigit(expression[i])) && (i = digitOperation(i,expression,operands)) ||
 		(expression[i]!=32) && push(operators,&expression[i]) 
 		&& operands.list->count>=2 && perform(operands,operators);
-	}
 	operands.list->count>1 && (res.error = 0) || operators.list->count>1  
 	&& (res.error = -1) && (res.result = 0) ||
 	(res.error = 1) && (res.result = *((int *)(*(operands.top))->data));
