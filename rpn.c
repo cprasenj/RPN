@@ -1,5 +1,5 @@
 #include "rpn.h"
-
+#include <string.h>
 int isDigit(char ch){
 	return ch >= '0' && ch <= '9';
 }
@@ -55,3 +55,54 @@ Result evaluate(char* expression){
 	(res.error = 1) && (res.result = *((int *)(*(operands.top))->data));
 	return res;
 }
+
+int isOperator(char ch) {
+	char a[] = {'+','-','*','/','^'};
+	int i;
+	for(i=0;i<4;i++)
+		if(a[i] == ch) return 1;
+	return 0;
+}
+
+int precedence(char sign){
+	int precedence = -1;
+	(sign == '+' || sign == '-') && (precedence = 0);
+	(sign == '/' || sign == '*') && (precedence = 1);
+	sign == '^' && (precedence = 2);
+	return precedence;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+// char* infixToPostfix(char* expression) {
+// 
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
