@@ -1,5 +1,6 @@
 #include "rpn.h"
 #include <string.h>
+
 int isDigit(char ch){
 	return (ch >= '0' && ch <= '9') ? 1 : 0;
 }
@@ -10,7 +11,7 @@ char getOperator(Stack stack){
 	char sign = *(char *)pop(stack);
 	return (sign<0) ? *(char *)pop(stack) : sign;
 }
-void operation(int o1,int o2,char op,Stack operands) {
+int operation(int o1,int o2,char op,Stack operands) {
 	int res,*tmp;
 	op == '+' && (res = o1+o2);
 	op == '-' && (res = o1-o2);
@@ -19,11 +20,11 @@ void operation(int o1,int o2,char op,Stack operands) {
 	tmp = malloc(sizeof(int));
 	*tmp = res;
 	push(operands,tmp);
+	return res;
 }
 int perform(Stack operands,Stack operators) {
 	int digit2 = *((int *)pop(operands)),digit1 = *((int *)pop(operands));
-	operation(digit1,digit2,getOperator(operators),operands);
-	return 1;
+	return operation(digit1,digit2,getOperator(operators),operands);
 }
 NUM digitCalculator(int index,char* expression) {
 	NUM n;
@@ -63,7 +64,6 @@ int isOperator(char ch) {
 		if(a[i] == ch) return 1;
 	return 0;
 }
-
 int precedence(char sign) {
 	int precedence = -1;
 	(sign == '+' || sign == '-') && (precedence = 0);
@@ -71,16 +71,13 @@ int precedence(char sign) {
 	sign == '^' && (precedence = 2);
 	return precedence;
 }
-
 int firstLevelOperation(Stack operands,Stack operators, int index,char* expression) {
-	expression[index+2] == '(' &&
-	(index = parenthesisOperation(operands,operators,index+2,expression)) ||
-	push(operands,&expression[index+2]);
-	push(operands,&expression[index]);
-	return index+2;
+	(expression[index+2] == '(') && (index = parenthesisOperation(operands,operators,index+2,expression)) && 
+	push(operators,&expression[index-2]) && (index+=6) ||
+	push(operands,&expression[index+2]) && push(operands,&expression[index]) && (index+=2);
+	return index;
 }
-
-int secondLevelOneOperation(Stack operands,Stack operators,int index,char* expression) {
+int secondLevelOperation(Stack operands,Stack operators,int index,char* expression) {
 	int i,count = 0,j;
 	push(operators,&expression[index]);
 	expression[index+2] == '(' && 
@@ -88,25 +85,24 @@ int secondLevelOneOperation(Stack operands,Stack operators,int index,char* expre
 	push(operands,&expression[index+2]);
 	return index+2;
 }
-
 int parenthesisOperation(Stack operands,Stack operators,int index,char* expression) {
-	int i;
-	for(i = index;expression[i+2]!=')';i+=2){
-	expression[i+1] == '(' && parenthesisOperation(operands,operators,i+1,expression);	
-	isDigit(expression[i+2]) && (i = digitOperation(index+2,expression,operands));
-	if(precedence(expression[i+1])>=0)
-		i = rankWiseOperation(precedence(expression[i+1]),operands,operators,index,expression)+3;
+	int i,count = 0,rank;
+	for(i = index;expression[i]!=')';i++){
+	expression[i+2] == '(' && parenthesisOperation(operands,operators,i+2,expression);	
+	isDigit(expression[i+2]) && (i = infixDigitOperation(i+2,expression,operands));
+	rank = precedence(expression[i+1]);
+		if(rank>=0)
+			!rank && infixDigitOperation(i+3,expression,operands) && push(operands,&expression[i+1]) && (i+=4) ||
+			(index = rankWiseOperation(precedence(expression[i+1]),operands,operators,index,expression)+3);
 	}
 	return index++;
 }
-
 int rankWiseOperation(int rank,Stack operands,Stack operators,int index,char* expression) {
 	!rank && push(operators,&expression[index]) && index++;
 	(rank == 1) && (index = firstLevelOperation(operands,operators,index,expression));
-	(rank == 2) && (index = secondLevelOneOperation(operands,operators,index,expression));
+	(rank == 2) && (index = secondLevelOperation(operands,operators,index,expression));
 	return index;
 }
-
 int infixOperation(Stack operands,Stack operators,int index,char* expression){
 	int rank;
 	isDigit(expression[index]) && (index = infixDigitOperation(index,expression,operands));
@@ -116,7 +112,6 @@ int infixOperation(Stack operands,Stack operators,int index,char* expression){
 	expression[index] == '(' && (index = parenthesisOperation(operands,operators,index,expression));
 	return index;
 }
-
 int infixDigitOperation(int i,char* expression,Stack operands) {
 	NUM exp;
 	char *tmp = (int *)malloc(sizeof(char*));
@@ -125,7 +120,6 @@ int infixDigitOperation(int i,char* expression,Stack operands) {
 	push(operands,tmp);
 	return exp.index;
 }
-
 void reverse(char* array,int length) {
 	int i;
 	char tmp;
@@ -135,7 +129,6 @@ void reverse(char* array,int length) {
 		array[length-i-1] = tmp;
 	}
 }
-
 char* infixToPostfix(char* expression) {
 	int i;
 	Stack operators = createStack(),operands = createStack();
@@ -149,34 +142,3 @@ char* infixToPostfix(char* expression) {
 		(result[i] = *(char*)pop(operators)) && result[i] == '(' && i--;	
 	return result;
 }
-
-
-
-
-
-
-
-
-
-
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -36,6 +36,107 @@ everything test_evaluate_001(){
 	assertEqual(evaluate("1 2 3 4 5 + + + +").result,15);
 }
 
+void test_isDigit_001() {
+	console.log("is Digit gives 1 for digit characters");
+	assertEqual(isDigit('1'),1);
+}
+
+void test_isDigit_002() {
+	console.log("is Digit gives 0 for nondigit characters");
+	assertEqual(isDigit('*'),0);
+}
+
+void test_isDigit_003() {
+	console.log("is Digit gives 0 for nondigit characters");
+	assertEqual(isDigit('('),0);
+}
+
+void test_parseInt_001() {
+	System.out.println("turns a characterdigit into integer");
+	assertEqual(parseInt('9'),9);
+}
+
+void test_operation_001() {
+	Stack operands = createStack();
+	cout("operation gives 3 for 1,2,+");
+	assertEqual(operation(1,2,'+',operands),3);
+}
+
+void test_operation_002() {
+	Stack operands = createStack();
+	cout("operation gives -1 for 1,2,-");
+	assertEqual(operation(1,2,'-',operands),-1);
+}
+
+void test_operation_003() {
+	Stack operands = createStack();
+	cout("operation gives 2 for 1,2,*");
+	assertEqual(operation(1,2,'*',operands),2);
+}
+
+void test_operation_004() {
+	Stack operands = createStack();
+	cout("operation gives 2 for 4,2,/");
+	assertEqual(operation(4,2,'/',operands),2);
+}
+
+void test_perform_001(){
+	Stack operands = createStack(),operators = createStack();
+	int a = 2,b = 3,u;
+	char c = '+';
+	System.out.println("perform gives 5 for 2,3 and + operator");
+	push(operands,&a);
+	push(operands,&b);
+	push(operators,&c);
+	u = perform(operands,operators);
+	assertEqual(u,5);
+	assertEqual(*(int *)pop(operands),5);
+}
+
+void test_perform_002(){
+	Stack operands = createStack(),operators = createStack();
+	int a = 2,b = 3,u;
+	char c = '*';
+	System.out.println("perform gives 6 for 2,3 and * operator");
+	push(operands,&a);
+	push(operands,&b);
+	push(operators,&c);
+	u = perform(operands,operators);
+	assertEqual(u,6);
+	assertEqual(*(int *)pop(operands),6);
+}
+
+void test_perform_003(){
+	Stack operands = createStack(),operators = createStack();
+	int a = 12,b = 2,u;
+	char c = '/';
+	System.out.println("perform gives 6 for 12,2 and * operator");
+	push(operands,&a);
+	push(operands,&b);
+	push(operators,&c);
+	u = perform(operands,operators);
+	assertEqual(u,6);
+	assertEqual(*(int *)pop(operands),6);
+}
+
+void test_perform_004(){
+	Stack operands = createStack(),operators = createStack();
+	int a = 12,b = 12,u;
+	char c = '-';
+	System.out.println("perform gives 0 for 12,12 and - operator");
+	push(operands,&a);
+	push(operands,&b);
+	push(operators,&c);
+	u = perform(operands,operators);
+	assertEqual(u,0);
+}
+
+void test_digitCalculator_001() {
+	char *c = "123 + 456";
+	console.log("digitCalculator gives 123 for 123 + 456");
+	assertEqual(digitCalculator(0,c),123);
+}
+
 void test_evaluate_002(){
 	console.log("evaluate works for *");
 	assertEqual(evaluate("1 2 3 4 5 * * * *").result,120);
@@ -116,6 +217,15 @@ void test_infixToPostfix_004() {
 	assertEqual(strcmp(infixToPostfix("1 * 2 + 3 * 4 + 5 + 6 ^ 3 ^ 4"),a),0);
 }
 
+void test_parenthesisOperation_001() {
+	Stack operands = createStack(),operators = createStack();
+	char *e = "( 1 + 2 )";
+	int c = parenthesisOperation(operands,operators,0,e);
+	char q = *(int*)pop(operands);
+	assertEqual(q,'+');
+	assertEqual(*(int*)pop(operands),'2');
+	assertEqual(*(int*)pop(operands),'1');
+}
 
 everything test_infixToPostfix_005() {
 	char a[] = "342*15-23^^/+";
