@@ -89,22 +89,25 @@ int parenthesisOperation(Stack operands,Stack operators,int index,char* expressi
 	int i,count = 0,rank;
 	for(i = index;expression[i]!=')';i++){
 	expression[i+2] == '(' && parenthesisOperation(operands,operators,i+2,expression);	
-	isDigit(expression[i+2]) && (i = digitOperation(i+2,expression,operands));
+	isDigit(expression[i+2]) && (i = infixDigitOperation(i+2,expression,operands));
 	rank = precedence(expression[i+1]);
-	rank>=0 && !rank && digitOperation(i+3,expression,operands) && push(operands,&expression[i+1]) && (i+=4) ||
+	rank>=0 && !rank && infixDigitOperation(i+3,expression,operands) && push(operands,&expression[i+1]) && (i+=4) ||
 	(index = rankWiseOperation(precedence(expression[i+1]),operands,operators,index,expression)+3);
 	}
 	return index++;
 }
 int rankWiseOperation(int rank,Stack operands,Stack operators,int index,char* expression) {
-	!rank && push(operators,&expression[index]) && index++;
+	if(*operators.top)
+		precedence(*((char*)(*(operators.top))->data))==precedence(expression[index]) &&
+		precedence(expression[index])<2 && push(operands,pop(operators));
+	(!rank) &&	push(operators,&expression[index]) && index++;
 	(rank == 1) && (index = firstLevelOperation(operands,operators,index,expression));
 	(rank == 2) && (index = secondLevelOperation(operands,operators,index,expression));
 	return index;
 }
 int infixOperation(Stack operands,Stack operators,int index,char* expression){
 	int rank;
-	isDigit(expression[index]) && (index = digitOperation(index,expression,operands));
+	isDigit(expression[index]) && (index = infixDigitOperation(index,expression,operands));
 	rank = precedence(expression[index]);
 	rank>=0 && (index = rankWiseOperation(rank,operands,operators,index,expression));
 	expression[index] == '(' && (index = parenthesisOperation(operands,operators,index,expression));

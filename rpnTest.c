@@ -193,26 +193,26 @@ everything test_precedence_001() {
 }
 
 void test_infixToPostfix_001() {
-	char a[] = "123++";
+	char a[] = "12+3+";
 	cout("turns infix expression to postfix expression");
 	assertEqual(strcmp(infixToPostfix("1 + 2 + 3 "),a),0);
 }
 
 
 void test_infixToPostfix_002() {
-	char a[] = "12*34*56+++";
+	char a[] = "12*34*+5+6+";
 	System.out.println("turns infix expression to postfix expression");
 	assertEqual(strcmp(infixToPostfix("1 * 2 + 3 * 4 + 5 + 6 "),a),0);
 }
 
 void test_infixToPostfix_003() {
-	char a[] = "12*34*563^+++";
+	char a[] = "12*34*+5+63^+";
 	System.out.println("turns infix expression to postfix expression");
 	assertEqual(strcmp(infixToPostfix("1 * 2 + 3 * 4 + 5 + 6 ^ 3 "),a),0);
 }
 
 void test_infixToPostfix_004() {
-	char a[] = "12*34*5634^^+++";
+	char a[] = "12*34*+5+634^^+";
 	System.out.println("turns infix expression to postfix expression");
 	assertEqual(strcmp(infixToPostfix("1 * 2 + 3 * 4 + 5 + 6 ^ 3 ^ 4"),a),0);
 }
@@ -230,6 +230,23 @@ void test_parenthesisOperation_001() {
 everything test_infixToPostfix_005() {
 	char a[] = "342*15-23^^/+";
 	cout("turns infix expression to postfix expression");
-	printf("%s\n",infixToPostfix("3 + 4 * 2 / ( 1 - 5 ) ^ 2 ^ 3 "));
 	assertEqual(strcmp(infixToPostfix("3 + 4 * 2 / ( 1 - 5 ) ^ 2 ^ 3"),a),0);
+}
+
+void test_infixToPostfix_006() {
+	char a[] = "12-3+";
+	console.log("turns infix expression to postfix expression");
+	assertEqual(strcmp(infixToPostfix("1 - 2 + 3 "),a),0);
+}
+
+void test_infixToPostfix_007() {
+	char a[] = "12*3*";
+	console.log("turns infix expression to postfix expression");
+	assertEqual(strcmp(infixToPostfix("1 * 2 * 3 "),a),0);
+}
+
+void test_infixToPostfix_008() {
+	char a[] = "12/3*";
+	console.log("turns infix expression to postfix expression");
+	assertEqual(strcmp(infixToPostfix("1 / 2 * 3 "),a),0);
 }
